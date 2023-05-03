@@ -1,4 +1,5 @@
 FROM openjdk:8-jre
-ADD java-artifacts
+ADD target/roshambo-0.0.1-SNAPSHOT.jar
 EXPOSE 8010
+ENTRYPOINT ["java","-jar","target/roshambo-0.0.1-SNAPSHOT.jar.jar"]
 
