@@ -39,6 +39,9 @@ jobs:
         with:
           name: github-actions-artifact
           path: staging
+          
+      - name: check files
+        run: ls -a
         
   Image-push:
     runs-on: ubuntu-latest
