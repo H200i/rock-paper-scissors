@@ -1,5 +1,6 @@
 # use artifactory for jar upload/download
 # use multiple jobs
+# use github.sha as a tag 
 
 
 
