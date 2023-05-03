@@ -1,4 +1,4 @@
 FROM openjdk:8-jre
-ADD target/roshambo-0.0.1-SNAPSHOT.jar
+ADD java-artifacts
 EXPOSE 8010
 
