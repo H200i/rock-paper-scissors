@@ -65,6 +65,10 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
  
+      - name: checking file
+        run: cat depservice.yml
+        
+        
          # EKS Cluster Authentication
       - name: EKS Cluster Authentication
         run: aws eks update-kubeconfig --name my-eks --region eu-central-1
