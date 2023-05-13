@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: myserver
-        image: 094175769936.dkr.ecr.us-east-1.amazonaws.com/ideabank:latest
+        image: 094175769936.dkr.ecr.us-east-1.amazonaws.com/ideabank:${{ github.sha }}
         ports:
         - containerPort: 3000
         
