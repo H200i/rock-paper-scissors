@@ -1,9 +1,5 @@
-# use artifactory for jar upload/download
-# use multiple jobs
 # use github.sha as a tag 
 # use oidc role instead of secrets
-
-
 
 name: Application-CICD
 
@@ -32,7 +28,7 @@ jobs:
         with:
           java-version: 1.8
           
-        # Build Maveb project
+        # Build Maven project
       - name: Build Maven project
         run: |
           mvn -B package --file pom.xml
@@ -45,21 +41,20 @@ jobs:
           name: java-artifacts
           path: staging
          
-         
-         # image-job
-         
+        # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         aws-region: us-east-1
+         aws-region: eu-central-1
 
+        # Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         
-     
+        # Build, tag, and push the image to Amazon ECR
       - name: Build, tag, and push the image to Amazon ECR
         env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -70,62 +65,16 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
  
-          # deploy-job
-          
-      - name: Update kube config
+         # EKS Cluster Authentication
+      - name: EKS Cluster Authentication
         run: aws eks update-kubeconfig --name my-eks --region us-east-1
 
+         # Deploy image to Amazon EKS
       - name: Deploy image to Amazon EKS
         run: |
           kubectl apply -f depservice.yml
           
-            
-            # End
-            
-  Image-push:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: us-east-1
-
-        - name: Login to Amazon ECR
-          id: login-ecr
-          uses: aws-actions/amazon-ecr-login@v1
-        
-   
-    
-     
          
-  Deploy:
-     runs-on: ubuntu-latest
-     needs: Image-push
-    
-     steps:
-     
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
-           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           aws-region: us-east-1
-
-        - name: Login to Amazon ECR
-          id: login-ecr
-          uses: aws-actions/amazon-ecr-login@v1
-          
-          
-          
-
-
-
-
 
 
 
